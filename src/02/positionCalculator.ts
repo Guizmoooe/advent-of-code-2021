@@ -2,6 +2,7 @@ type Direction = "forward" | "up" | "down";
 type RawPosition = string;
 type HorizontalPosition = number;
 type VerticalPosition = number;
+type AimPosition = number;
 
 type DirectionInput = {
   [K in Direction]?: number;
@@ -29,6 +30,22 @@ export const calculateNewXPosition = (
       return currentXPosition + Object.values(directionInput)[0];
     default:
       return currentXPosition;
+  }
+};
+export const calculateNewAimPosition = (
+  depthPosition: VerticalPosition,
+  aimPosition: AimPosition,
+  directionInput: DirectionInput
+): HorizontalPosition => {
+  switch (Object.keys(directionInput)[0]) {
+    case "forward":
+      return (depthPosition = aimPosition * Object.values(directionInput)[0]);
+    case "up":
+      return aimPosition - Object.values(directionInput)[0];
+    case "down":
+      return aimPosition + Object.values(directionInput)[0];
+    default:
+      return aimPosition;
   }
 };
 
@@ -79,9 +96,41 @@ export const calculateFinalYPosition = (
 
   return finalYPosition;
 };
+export const calculateFinalDepthPosition = (
+  rawPositions: RawPosition[]
+): AimPosition => {
+  const formattedPositions = formatPositions(rawPositions);
+  let currentAimPosition = 0;
+  let depthPosition = 0;
+  const finalAimPosition = formattedPositions.reduce(
+    (finalAimPosition, position) => {
+      const newAimPosition = calculateNewAimPosition(
+        depthPosition,
+        currentAimPosition,
+        position
+      );
+      if (position.forward) {
+        depthPosition += newAimPosition;
+      } else {
+        currentAimPosition = newAimPosition;
+        finalAimPosition = newAimPosition;
+      }
+      return depthPosition;
+    },
+    0
+  );
+
+  return finalAimPosition;
+};
 
 export const calculateFinalAnswer = (rawPositions: RawPosition[]): number => {
   const finalYPosition = calculateFinalYPosition(rawPositions);
   const finalXPosition = calculateFinalXPosition(rawPositions);
   return finalYPosition * finalXPosition;
+};
+
+export const calculateFinalAnswer2 = (rawPositions: RawPosition[]): number => {
+  const finalXPosition = calculateFinalXPosition(rawPositions);
+  const finalAimPosition = calculateFinalDepthPosition(rawPositions);
+  return finalXPosition * finalAimPosition;
 };

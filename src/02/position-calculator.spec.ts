@@ -1,12 +1,15 @@
 import {
-  calculateFinalAnswer,
-  calculateFinalXPosition,
-  calculateFinalYPosition,
-  calculateNewXPosition,
-  calculateNewYPosition,
-  formatPositions,
-  formatRawPosition,
-} from "./positionCalculator";
+    calculateFinalAnswer,
+    calculateFinalXPosition,
+    calculateFinalYPosition,
+    calculateNewXPosition,
+    calculateNewYPosition,
+    formatPositions,
+    formatRawPosition,
+    calculateNewAimPosition,
+    calculateFinalDepthPosition,
+    calculateFinalAnswer2
+} from './positionCalculator';
 
 describe("???", () => {
   describe("part1", () => {
@@ -48,6 +51,16 @@ describe("???", () => {
     });
   });
   describe("part2", () => {
-    //TODO
-  })
+    it("should return x position", () => {
+      expect(calculateNewAimPosition(0,8, { forward: 9 })).toEqual(72);
+    });
+    it("should return final aim position", () => {
+      expect(calculateFinalDepthPosition(["forward 5", "down 5", "forward 8", "up 3", "down 8", "forward 2"])).toEqual(60);
+    });
+    it("should calculate the final answer part 2", () => {
+      expect(
+        calculateFinalAnswer2(["forward 5", "down 5", "forward 8", "up 3", "down 8", "forward 2"])
+      ).toEqual(900);
+    });
+  });
 });
